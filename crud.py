@@ -7,7 +7,6 @@
 
 '''
 
-
 import pyodbc
 import os
 import traceback
@@ -72,13 +71,13 @@ def create_table(sqlDbConn, database_name, table_name, table_structure):
     try:
         # sqlDbConn.autocommit = True
         cursor = sqlDbConn.cursor()
-        table_structure_list = [table_structure.split(",")]
+        table_structure_list = table_structure.split(",")
         cursor.execute(f"USE {database_name}")
-        cursor.execute(f"CREATE TABLE {table_name} ({table_structure_list})")
+        cursor.execute(f"CREATE TABLE {table_name} ({table_structure})")
         sqlDbConn.commit()
         print(f"Table '{table_name}' created successfully.")
     except Exception as e:
-        print(f"table already exists")
+        print(f"table already exists {e}")
 
 
 def read_table(sqlDbConn, database_name, table_name):
@@ -247,7 +246,7 @@ def get_data_type(sqlDbConn, database_name, table_name):
             
         return data_types_names
     except Exception as e:
-        print(f"table does not exist.") 
+        print(f"table does not exist.{e}") 
 
 
 def update_table(sqlDbConn, database_name, table_name, column_name, column_value, condition):
@@ -305,7 +304,7 @@ def main():
 
     while True:
         try:
-            print("_______CRUD OPERATION ON DATABASE_______")
+            print("CRUD OPERATION ON DATABASE")
             user_input = int(input(f"1. Create Database\n2. Create Table\n3. Read from Table\n4. Insert into Table\n5. Update Table\n6. Delete by condition\n7. Delete Table\n8. Delete Database\n9. exit\nEnter your choice: "))
             
             match(user_input):
@@ -381,7 +380,6 @@ def main():
             print("try giving an integer as an input.")
         except Exception as e:
             traceback.print_exc()  
-
 
 if __name__ == "__main__":
     main()
