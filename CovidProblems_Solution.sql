@@ -4,39 +4,42 @@
     @Last Modified : 27-08-2024
     @Title :Solving CSV datafile Queries using SQL*/
 
-use dbTest;
+use test;
 
 select * from dbo.covid_19_clean_complete;
-select * from dbo.covid_19_india;
 select * from dbo.worldometer_data;
+
+use joins;
+select * from dbo.covid_19_clean_complete;
+select * from dbo.covid_19_india;
 select * from dbo.covid_vaccine_statewise;
 select * from dbo.day_wise;
 
 -- P1. globally death percentage and country--
-select [Country Region],
+select Country,
 	CASE
 		WHEN SUM(CAST(Confirmed AS float)) > 0 THEN CAST((SUM(CAST(Deaths AS float)) * 100.0) / SUM(CAST(Confirmed AS float)) as decimal (10,2))
 		else 0
 	end as global_death_percentage
 from dbo.covid_19_clean_complete
-group by [Country Region] order by [Country Region] asc;
+group by Country order by Country asc;
 
 
 --P1. locally death percentage and state--
-select [Country Region],
+select Country,
 	CASE
 		WHEN SUM(CAST(Confirmed AS float)) > 0 THEN CAST((SUM(CAST(Deaths AS float)) * 100.0) / SUM(CAST(Confirmed AS float)) as decimal (10,2))
 		else 0
 	end as local_death_percentage
 from dbo.covid_19_clean_complete
-where [Country Region] = 'India'
-group by [Country Region] order by [Country Region] asc;
+where Country = 'India'
+group by Country order by Country asc;
 
 
 --P2. globally infected percentage --
 select [Country Region],
 	CASE
-        WHEN SUM(CAST(TotalCases AS float)) > 0 THEN 
+        WHEN SUM(CAST(Population AS float)) > 0 THEN 
             CAST((SUM(CAST(TotalCases AS float)) * 100.0) / SUM(CAST(Population AS float)) AS decimal(10, 2))
         ELSE 0
 	end as global_infection_rate
@@ -49,7 +52,7 @@ group by [Country Region] order by [Country Region] asc;
 
 select [Country Region],
 	CASE
-        WHEN SUM(CAST(TotalCases AS float)) > 0 THEN 
+        WHEN SUM(CAST(Population AS float)) > 0 THEN 
             CAST((SUM(CAST(TotalCases AS float)) * 100.0) / SUM(CAST(Population AS float)) AS decimal(10, 2))
         ELSE 0
 	end as local_infection_rate
@@ -72,19 +75,19 @@ GROUP BY [Country Region]  ORDER BY infection_rate DESC;
 
 --P4. To find out the countries and continents with the highest death counts--
 
-select TOP 1 [Country Region],
+select TOP 1 Country,
 	CASE
 		WHEN SUM(CAST(Confirmed AS float)) > 0 THEN CAST((SUM(CAST(Deaths AS float)) * 100.0) / SUM(CAST(Confirmed AS float)) as decimal (10,2))
 		else 0
 	end as global_death_rate
 from dbo.covid_19_clean_complete
-group by [Country Region] order by global_death_rate desc;
+group by Country order by global_death_rate desc;
 
 
 --P5. Average number of deaths by day (Continents and Countries)--
-select [Country Region], Date, AVG(CAST(Deaths AS INT)) as TotalDeath
+select Country, Date, AVG(CAST(Deaths AS INT)) as TotalDeath
 from dbo.covid_19_clean_complete
-group by [Country Region],Date ;
+group by Country,Date ;
 
 
 --P6. Average of cases divided by the number of population of each country (TOP 10)--
